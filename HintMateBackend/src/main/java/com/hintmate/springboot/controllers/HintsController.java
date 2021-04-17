@@ -1,19 +1,21 @@
 package com.hintmate.springboot.controllers;
 
-import org.json.simple.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.hintmate.springboot.model.HintsRequestBody;
+import com.hintmate.springboot.service.WordMeaningsService;
+import com.hintmate.springboot.service.impl.WordMeaningsServiceImpl;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class HintsController {
-    @RequestMapping("/getMeaning")
-    public String getWordMeanings(@RequestParam(value="payload")String payload) {
-    	String meaning = "ABCDE";
-    	String res = payload + " Means " + meaning; 
-        return res;
+
+    private WordMeaningsService meaningsService = new WordMeaningsServiceImpl();
+
+    @PostMapping("/getMeaning")
+    public String getWordMeanings(@RequestBody HintsRequestBody request) {
+        String payload = request.getPayload().toLowerCase();
+        String meaning = meaningsService.fetchMeanings(payload);
+        return meaning;
     }
 }

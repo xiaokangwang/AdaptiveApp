@@ -1,21 +1,22 @@
 package com.hintmate.springboot.controllers;
 
+import com.hintmate.springboot.model.WordListsBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.simple.JSONObject;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class FilterWordsController {
 
-    @RequestMapping("/fetchFilteredWords")
-    public List fetchFilteredWords(@RequestParam(value="payload")JSONObject payload) {
+    @PostMapping("/fetchFilteredWords")
+    public List fetchFilteredWords(@RequestBody WordListsBody request) {
+        List words = request.getPayload();
         List<String> filteredWords = new ArrayList<>();
         filteredWords.add("word1");
         filteredWords.add("2ndWord");
-        return filteredWords;
+        return words;
     }
 }
