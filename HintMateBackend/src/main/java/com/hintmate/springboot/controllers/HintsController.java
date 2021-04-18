@@ -12,7 +12,7 @@ public class HintsController {
 
     private WordMeaningsService meaningsService = new WordMeaningsServiceImpl();
 
-    @PostMapping("/getMeaning")
+    @PostMapping("/getHintForWord")
     public String getWordMeanings(@RequestBody HintsRequestBody request) {
         String payload = request.getPayload().toLowerCase();
         String meaning = meaningsService.fetchMeanings(payload);
