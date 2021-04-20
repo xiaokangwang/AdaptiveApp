@@ -9,6 +9,7 @@
 // @grant        GM.xmlHttpRequest
 // @grant        GM_xmlHttpRequest
 // @grant        GM_log
+// @grant        GM_registerMenuCommand
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
 // ==/UserScript==
 
@@ -66,13 +67,19 @@
                 headers: this.headers,
                 data: this.data,
                 onload: function(rsp) {
+                    GM_log(rsp);
+
                     // Populate wrapper object with returned data
                     // including the Greasemonkey specific "responseHeaders"
                     for (var k in rsp) {
                         that[k] = rsp[k];
                     }
+                    that.responseText = rsp.responseText;
+                    //that.responseXML = rsp.responseXML;
                     // now we call onreadystatechange
                     that.onreadystatechange();
+
+                    GM_log(that);
                 },
                 onerror: function(rsp) {
                     for (var k in rsp) {
@@ -128,27 +135,119 @@
                 //$("."+synid).click((e)=>{});
                 $(document).on('mouseover', "." + synid ,function (v) {
                     GM_log(e);
+
+                    GM.xmlHttpRequest({
+                        method: 'POST',
+                        url: 'http://127.0.0.1:8090/getHintForWord',
+                        headers: {
+                            'Content-Type':'application/json'
+                        },
+                        data: JSON.stringify({
+                            payload: e
+                        }),
+                        onload: function(rsp) {
+
+                            //let repd = JSON.parse(rsp.responseText);
+                            GM_log(rsp.responseText);
+
+                            $( "#hint_container" ).show();
+                            $( "#hint_container" ).html(rsp.responseText);
+
+                            //$( "#hint_container" ).offset({ top: v.pageY, left: v.pageX});
+
+                        },
+                        onerror: function(rsp) {
+                            GM_log(rsp);
+                        }
+                    });
+
                 });
 
                 $(document).on('mouseout', "." + synid, function (v) {
                     GM_log(e + "out");
+                    $( "#hint_container" ).hide();
                 });
             });
 
         }
 
         let result = Array.from( texts.keys() );
-        Apply(result);
+        //Apply(result);
+        GM_log(Array.from( texts.keys() ));
+
+
+        GM.xmlHttpRequest({
+            method: 'POST',
+            url: 'http://127.0.0.1:8090/getWordToHint',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            data: JSON.stringify({
+                payload: Array.from( texts.keys() )
+            }),
+            onload: function(rsp) {
+                GM_log(rsp);
+                let repd = JSON.parse(rsp.responseText);
+                GM_log(repd);
+                Apply(repd.payload);
+            },
+            onerror: function(rsp) {
+                GM_log(rsp);
+            }
+        });
+
+
+        function explain(v){
+            GM_log(window.getSelection().toString());
+
+            let e = window.getSelection().toString();
+
+            GM.xmlHttpRequest({
+                method: 'POST',
+                url: 'http://127.0.0.1:9000/getHintForWord',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                data: JSON.stringify({
+                    payload: e
+                }),
+                onload: function(rsp) {
+
+                    //let repd = JSON.parse(rsp.responseText);
+                    GM_log(rsp.responseText);
+
+                    $( "#hint_container" ).show();
+                    $( "#hint_container" ).html(rsp.responseText);
+
+                    //$( "#hint_container" ).offset({ top: v.pageY, left: v.pageX});
+
+                },
+                onerror: function(rsp) {
+                    GM_log(rsp);
+                }
+            });
+
+        };
+
+         GM_registerMenuCommand("Show Meaning", explain);
+    }
+
+   
+
+
+    /*
         $.ajax({
-            url: 'http://127.0.0.1:1122/check',// this even works for cross-domain requests by default
+            url: 'http://127.0.0.1:9000/getWordToHint',// this even works for cross-domain requests by default
             xhr: function(){return new GM_XHR();},
             type: 'POST',
-            data: {
+            contentType: 'application/json',
+            data: JSON.stringify({
                 payload: Array.from( texts.keys() )
-            },
-            success: function(val){
+            }),
+            success: function(val, test, other){
+                GM_log(val);
                 //Apply markup
-                let result = Array.from( texts.keys() );
+                let result = val.payload;
                 Apply(result);
             },
             error: function(err){
@@ -156,11 +255,11 @@
             }
         });
 
-    };
-
-
+};
+*/
+ /*
     $.ajax({
-        url: 'http://127.0.0.1:1122/test',// this even works for cross-domain requests by default
+        url: 'http://127.0.0.1:9000/',// this even works for cross-domain requests by default
         xhr: function(){return new GM_XHR();},
         type: 'POST',
         success: function(val){
@@ -169,8 +268,11 @@
         error: function(err){
             GM_log(err);
         }
-    });
+    });*/
 
-    GM_log("Test");
-    MarkupRegion(document);
+ GM_log("Test");
+MarkupRegion(document);
+
+$('body').append("<div id=\"hint_container\" style=\"background-color:white; position: fixed; bottom: 0; width: 100%; z-index: 9999999999; border: 4px dotted blue; \"></div>");
+$( "#hint_container" ).hide();
 })();
