@@ -18,7 +18,7 @@ public class WordMeaningsServiceImpl implements WordMeaningsService {
     @Override
     public String fetchMeanings(String word) {
         DatabaseConnectionService dbs = new DatabaseConnectionServiceImpl();
-        Connection dbConnection = dbs.getDBConnection();
+        Connection dbConnection = dbs.getDBConnectionToMeanings();
         ResultSet resultData = fetchAllData(dbConnection);
         if (map == null) {
             loadDictionary(resultData, dbConnection);
