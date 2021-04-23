@@ -1,0 +1,59 @@
+Objective/Aim of the paper
+The objective of the paper is to examine the factors that contribute towards the helpfulness of online reviews and build a predictive model based on it. In this paper, the authors also devise a method to extract linguistic category features from text. They also study the effect of product type on review helpfulness.
+Linguistic Categories and Psychological properties of language 
+There are three major categories of psychological properties of language, given as –
+1.	Adjectives (ADJ) – Adjective are words such as fantastic, excellent, beautiful, wonderful, fabulous. Adjectives are highly subjective and abstract. They are less verifiable, more disputable and least informative. Adjective depends highly on opinions of the people using them.
+2.	State Verbs (SV) – State verbs are words such as love, envy, hate. They indicate emotional/mental state of the person using them. They too are abstract in nature. They are used in sentences that are beyond specific behaviour/situation. 
+3.	Action Verbs – Actions verbs are further divided into three categories –
+a.	State Action Verb (SAV) – are words such as amaze, anger, shock. They describe emotion consequence of an action. They can be positive or negative in connotation.
+b.	Interpretive Action Verb (IAV) – are words such as help, avoid, recommend. They too can be positive or negative in connotation. 
+c.	Descriptive Action Verb (DAV) – are words such as talk, run, take, call, make. They provide the description of an action. DAVs are verifiable, more concrete and less disputable. They are object in nature and are most informative. Obviously they cannot be positive or negative.
+“Reviews with more concrete and descriptive information is more likely to be helpful”, this means that reviews consisting of DAVs can possibly be more helpful than reviews with ADJs.
+Model Feature Extraction
+There are four feature that are used in this paper, namely – Linguistic Features, Metadata Features, Readability features, and Subjectivity features. The process of each feature extraction is given below -
+1.	Linguistic Features –
+To extract the linguistic features of the text, the authors first used NLTK Parts-Of-Speech (POS) tagger to tag all the reviews in the dataset. Then they used different techniques to extract different features of the text. These techniques are given as follows – 
+To extract –
+a.	Adjective Feature (ADJ) –
+To get adjective, they extracted all the words from every sentence with a ‘JJ’ POS tag. They did this by using regular expression.
+b.	State Verb (SV) –
+State verbs are limited in number. So a pre-defined list of keywords is used to store all state verbs. First, all the words with verb POS tag are extracted from every sentence of the review. Second, the predefined list is used to determine state verbs. 
+Special Condition – If a sentence consists of both SV and AV, then SV is ignored and AV is considered as action verb describes a specific action.
+c.	Action Verb
+All of the remaining verbs which (are not classified as state verb) are classified as action verbs. Action verbs consist of three types, all of which vary in abstraction.
+i.	State Action Verb – are generally more abstract and describe general behaviour. SAVs have higher valence component than IAVs.
+ii.	Interpretive Action Verb – IAVs have higher valence component than DAVs
+iii.	Descriptive Action Verb – DAVs have low/no valence. DAVs are very objective and describes specific situations and observable behaviour. 
+So, valence can be used as primary criterion to distinguish between SAV, IAV and DAV. Steps to do this is given as follows – 
+First, compute Action Verb Acore (AVScore) of each action verb. AVScore is calculated by taking the mean of the subjectivity score of Top-K synsets (by default K = 3).
+Second, from AVScore, determine the type of action verb by using Tau1 and Tau2 in the formula given below –
+If (tau1 =< AVScore)
+		then word = SAV
+else if (tau2 =< AV < tau1)
+		then word = IAV
+else 
+		word = DAV
+Special Condition – If multiple categories of action verb are present in a single sentence then the highest describing category is picked, i.e. DAV more preferred than IAV, IAV more preferred than SAV.
+Linguistic Feature Set is therefore determined after calculating the above features and then following the steps below –
+I.	Count the occurrences of five linguistic features for each sentence in a review. Then aggregate these scores which make a feature of one review.  Do this for all the reviews. 
+II.	After calculating LF for every review, calculate mean and standard deviation across each LF of all the reviews. 
+III.	Calculate z-score by using the formula –
+		z-score = (LF – mean)/standard deviation
+Collection of z-scores for each review makes the final Linguistic Feature Set. 
+
+2.	Metadata Features –
+Past research studies prove that review valence and review publication date influence the total number of helpful votes, therefore, the authors used two features related to metadata namely, 1) review extremity and 2) review age. 
+Review Extremity = Review rating – Mean(product rating)
+Review age = log(review date – product release date)
+
+3.	Readability Features –
+Highly readable review is likely to be read and voted by more number of users. To determine review readability, the authors used readability metrics such as – 1) Automated Readability, 2) SMOG etc. 
+
+4.	Subjectivity Features – 
+A review with more subjective words is likely to be helpful, therefore, subjectivity feature was calculated as total number of subjective words (positive and negative opinion words) normalized by review length. 
+
+Evaluation
+“Figure 3 in the research paper shows the mean linguistic feature count and review valence count at the product category level for dataset 1. A clear and wide separation of mean scores for helpful and unhelpful reviews is evident from the charts.” This means, these linguistic features can be used to separate helpful and unhelpful reviews. Since state action verbs are not used very much, plus they are ignored if they exist with another action word in a sentence, therefore there is a narrow separation in the charts in case of SAV. 
+
+The authors used Naïve Bayes, Support vector Machine and Random Forrest classifier for this problem with Random Forest giving the highest f-measure of 87%. When the model was trained on individual features the f-measure decreased to 63% for LR, 57% for MF and 42% for both RF & SF. Using this, they concluded that the combined set features offer best predictive performance.
+
