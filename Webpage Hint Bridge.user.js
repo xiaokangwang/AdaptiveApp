@@ -127,7 +127,7 @@
                 let synid = "hint_" + e;
                 elements.forEach((domele)=>{
                     if(!domele.innerHTML.includes(synid)){
-                        domele.innerHTML = domele.innerHTML.replace(e+" ", "<span class=\""+synid+"\">" + e + "</span> ");
+                        domele.innerHTML = domele.innerHTML.replace(e+" ", "<span style=\" background-color: yellow; \" class=\""+synid+"\">" + e + "</span> ");
                     }
 
                 });
