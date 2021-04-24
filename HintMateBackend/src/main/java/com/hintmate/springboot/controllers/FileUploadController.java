@@ -61,7 +61,12 @@ public class FileUploadController {
 		redirectAttributes.addFlashAttribute("message",
 				"You successfully uploadedd " + file.getOriginalFilename() + "!");
 		FileToDBHandler ftdbh= new FileToDBHandler();
-		ftdbh.loadTextToDB();
+		try {
+			ftdbh.loadTextToDB();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Called");
 
 		return "redirect:/";

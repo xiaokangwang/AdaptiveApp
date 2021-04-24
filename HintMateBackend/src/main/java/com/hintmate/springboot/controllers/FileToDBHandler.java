@@ -33,7 +33,9 @@ public class FileToDBHandler {
 	        Statement s  = dbConnection.createStatement();
 	        s.execute(query);
 	        PreparedStatement pstmt = dbConnection.prepareStatement(sql);
-	        String filePath = "E:\\\\Workspace\\\\unknown_words.txt";
+	        File currentDirFile = new File(".");
+			String helper = currentDirFile.getAbsolutePath();
+	        String filePath = helper+"\\pyFileDir\\known_words.txt";
 	        FileInputStream fis = new FileInputStream(filePath);
 	        InputStreamReader isr = new InputStreamReader(fis);
 	        BufferedReader bReader = new BufferedReader(isr);
@@ -65,14 +67,19 @@ public class FileToDBHandler {
 	        ex.printStackTrace();
 	    }
 	}
-	public void loadUnKnownWords() throws SQLException{
+	public static void loadUnKnownWords() throws SQLException{
 //	    DatabaseConnectionService dbs = new DatabaseConnectionServiceImpl();
 	    Connection dbConnection = DriverManager.getConnection(KNOWLEDGE_DB);
 	    try {
 	        String query = "CREATE TABLE IF NOT EXISTS Unknown_Words (word PRIMARYKEY NOT NULL);";
+	        String sql = "INSERT INTO Known_Words(word,counter) VALUES(?,?)";
 	        Statement s  = dbConnection.createStatement();
 	        s.execute(query);
-	        String filePath = "src/main/resources/unknown_words.txt";
+	        int batchCounter = 0;
+	        PreparedStatement pstmt = dbConnection.prepareStatement(sql);
+	        File currentDirFile = new File(".");
+			String helper = currentDirFile.getAbsolutePath();
+	        String filePath = helper+"\\pyFileDir\\unknown_words.txt";
 	        FileInputStream fis = new FileInputStream(filePath);
 	        InputStreamReader isr = new InputStreamReader(fis);
 	        BufferedReader bReader = new BufferedReader(isr);
@@ -84,8 +91,17 @@ public class FileToDBHandler {
 	            if(line == null) {
 	                break;
 	            } else {
-	                strWord = line.split(",");
-	                listResult.add(new UserKnowledgeModel(strWord[0], 0));
+	            	listResult.add(new UserKnowledgeModel(line, 15));
+	                
+	                pstmt.setString(1, line);
+	                pstmt.setDouble(2, 15);
+	                pstmt.addBatch();
+	                batchCounter++;
+	                if(batchCounter == 1000)
+	                {
+	                	pstmt.executeBatch();
+	                	batchCounter = 0;
+	                }
 	            }
 	        }
 	    } catch (SQLException | IOException ex) {
@@ -105,7 +121,7 @@ public class FileToDBHandler {
 	    }
 	}
 	
-	public static void loadTextToDB() {
+	public static void loadTextToDB() throws ClassNotFoundException {
 //		ClassPathResource res = new ClassPathResource("adaptive_applications.py");
 //		File f = null;
 //		try {
@@ -115,20 +131,28 @@ public class FileToDBHandler {
 //			e1.printStackTrace();
 //		}
 //		System.out.println(f.getAbsolutePath());
+		createDatabase();
 		File currentDirFile = new File(".");
 		String helper = currentDirFile.getAbsolutePath();
 		System.out.println(helper);
-		ProcessBuilder pb = new ProcessBuilder("python",helper+"\\pyFileDir\\adaptive_applications.py",helper);
+		ProcessBuilder pb = new ProcessBuilder("python",helper+"\\pyFileDir\\adaptive_clean_code.py",helper);
 		try {
 			String s = "";
 			Process p = pb.start();
 			BufferedReader stdInput = new BufferedReader(new 
-	                 InputStreamReader(p.getInputStream()));
+	                 InputStreamReader(p.getErrorStream()));
 			 while ((s = stdInput.readLine()) != null) {
 	                System.out.println(s);
 	            }
 			System.out.println("Text converted to words");
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			loadKnownWords();
+			loadUnKnownWords();
+		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
