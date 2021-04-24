@@ -35,7 +35,7 @@ public class FileToDBHandler {
 	        PreparedStatement pstmt = dbConnection.prepareStatement(sql);
 	        File currentDirFile = new File(".");
 			String helper = currentDirFile.getAbsolutePath();
-	        String filePath = helper+"\\pyFileDir\\known_words.txt";
+	        String filePath = helper+"/pyFileDir/known_words.txt";
 	        FileInputStream fis = new FileInputStream(filePath);
 	        InputStreamReader isr = new InputStreamReader(fis);
 	        BufferedReader bReader = new BufferedReader(isr);
@@ -49,10 +49,10 @@ public class FileToDBHandler {
 	                break;
 	            } else {
 //	                strWord = line.split(",");
-	                listResult.add(new UserKnowledgeModel(line, 15));
+//	                listResult.add(new UserKnowledgeModel(line, 0));
 	                
 	                pstmt.setString(1, line);
-	                pstmt.setDouble(2, 15);
+	                pstmt.setDouble(2, 0);
 	                pstmt.addBatch();
 	                batchCounter++;
 	                if(batchCounter == 1000)
@@ -71,15 +71,15 @@ public class FileToDBHandler {
 //	    DatabaseConnectionService dbs = new DatabaseConnectionServiceImpl();
 	    Connection dbConnection = DriverManager.getConnection(KNOWLEDGE_DB);
 	    try {
-	        String query = "CREATE TABLE IF NOT EXISTS Unknown_Words (word PRIMARYKEY NOT NULL);";
-	        String sql = "INSERT INTO Known_Words(word,counter) VALUES(?,?)";
+	        String query = "CREATE TABLE IF NOT EXISTS Unknown_Words (word ,counter integer);";
+	        String sql = "INSERT INTO Unknown_Words(word,counter) VALUES(?,?)";
 	        Statement s  = dbConnection.createStatement();
 	        s.execute(query);
 	        int batchCounter = 0;
 	        PreparedStatement pstmt = dbConnection.prepareStatement(sql);
 	        File currentDirFile = new File(".");
 			String helper = currentDirFile.getAbsolutePath();
-	        String filePath = helper+"\\pyFileDir\\unknown_words.txt";
+	        String filePath = helper+"/pyFileDir/unknown_words.txt";
 	        FileInputStream fis = new FileInputStream(filePath);
 	        InputStreamReader isr = new InputStreamReader(fis);
 	        BufferedReader bReader = new BufferedReader(isr);
@@ -91,10 +91,10 @@ public class FileToDBHandler {
 	            if(line == null) {
 	                break;
 	            } else {
-	            	listResult.add(new UserKnowledgeModel(line, 15));
+//	            	listResult.add(new UserKnowledgeModel(line, 0));
 	                
 	                pstmt.setString(1, line);
-	                pstmt.setDouble(2, 15);
+	                pstmt.setDouble(2, 0);
 	                pstmt.addBatch();
 	                batchCounter++;
 	                if(batchCounter == 1000)

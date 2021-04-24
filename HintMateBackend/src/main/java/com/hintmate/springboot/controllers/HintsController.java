@@ -16,6 +16,7 @@ public class HintsController {
     public String getWordMeanings(@RequestBody HintsRequestBody request) {
         String payload = request.getPayload().toLowerCase();
         String meaning = meaningsService.fetchMeanings(payload);
+        meaningsService.updateUserKnowledge(payload);
         return meaning;
     }
 }
