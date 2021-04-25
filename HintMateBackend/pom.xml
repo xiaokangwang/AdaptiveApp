@@ -21,6 +21,23 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-jdbc</artifactId>
+    <version>5.3.5</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+<dependency>
+    <groupId>org.xerial</groupId>
+    <artifactId>sqlite-jdbc</artifactId>
+    <version>3.34.0</version>
+</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -47,7 +64,13 @@
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
 		</dependency>
-	</dependencies>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.6</version>
+		</dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
