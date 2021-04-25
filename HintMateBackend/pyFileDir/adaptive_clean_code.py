@@ -11,7 +11,17 @@ import numpy as np
 import pandas as pd
 import math
 import sys
+import ssl
+import os
 from nltk.tokenize import word_tokenize
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
 import nltk
 nltk.download('words')
 from nltk.corpus import stopwords
@@ -22,10 +32,12 @@ import nltk
 nltk.download('wordnet')
 
 from nltk.corpus import words
+
+
 word_list = words.words()
 stop_words = stopwords.words()
 
-frequency_list = pd.read_csv(sys.argv[1] + "\\pyFileDir\\frequency_list.csv")
+frequency_list = pd.read_csv(os.path.join(sys.argv[1],"pyFileDir","frequency_list.csv"))
 frequency_list.drop(frequency_list.columns[0],axis=1,inplace=True)
 
 normalized = (frequency_list[["count"]] - frequency_list[["count"]].mean())/frequency_list[["count"]].std()
@@ -37,7 +49,7 @@ frequency_list['groups'] = pd.qcut(frequency_list['count_nomalized'], q = 21,
 
 frequency_list = frequency_list.astype({'groups':int})
 
-doc = open(sys.argv[1] + "\\upload-dir\\hello.txt",'r',encoding='utf-8')
+doc = open(os.path.join(sys.argv[1],"upload-dir","hello.txt"),'r',encoding='utf-8')
 text = doc.read()
 doc.close()
 
@@ -85,12 +97,12 @@ vocabulary_score = math.ceil(vocabulary_score) #so unknown words = all words of 
 unknown_words = list(frequency_list.loc[frequency_list['groups']>vocabulary_score,'word'])
 known_words = list(frequency_list.loc[frequency_list['groups']<=vocabulary_score,'word'])
 
-with open(sys.argv[1] + '\\pyFileDir\\unknown_words.txt','w') as f:
+with open(os.path.join(sys.argv[1],"pyFileDir","unknown_words.txt"),'w') as f:
   f.write('\n'.join(unknown_words))
 
 fileknownwords = []
 for w in known_words:
     fileknownwords.append(str(w))
 
-with open(sys.argv[1] + '\\pyFileDir\\known_words.txt','w') as f:
+with open(os.path.join(sys.argv[1],"pyFileDir","known_words.txt"),'w') as f:
   f.write('\n'.join(fileknownwords))

@@ -44,7 +44,7 @@ public class FileToDBHandler {
 	        String strWord = null;
 	        while(true) {
 	            line = bReader.readLine();
-	            System.out.println(line);
+//	            System.out.println(line);
 	            if(line == null) {
 	                break;
 	            } else {
@@ -135,14 +135,15 @@ public class FileToDBHandler {
 		File currentDirFile = new File(".");
 		String helper = currentDirFile.getAbsolutePath();
 		System.out.println(helper);
-		ProcessBuilder pb = new ProcessBuilder("python",helper+"\\pyFileDir\\adaptive_clean_code.py",helper);
+		ProcessBuilder pb = new ProcessBuilder("python3",helper+"/pyFileDir/adaptive_clean_code.py",helper);
 		try {
+			System.out.println("Executing ...");
 			String s = "";
 			Process p = pb.start();
 			BufferedReader stdInput = new BufferedReader(new 
 	                 InputStreamReader(p.getErrorStream()));
 			 while ((s = stdInput.readLine()) != null) {
-	                System.out.println(s);
+//	                System.out.println(s);
 	            }
 			System.out.println("Text converted to words");
 		} catch (IOException e) {
@@ -153,16 +154,6 @@ public class FileToDBHandler {
 			loadKnownWords();
 			loadUnKnownWords();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static void main(String[] args) {
-		try {
-			createDatabase();
-			loadKnownWords();
-		} catch (SQLException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -15,7 +15,9 @@ import com.hintmate.springboot.storage.StorageService;
 public class HintMateBackendApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(HintMateBackendApplication.class, args);
+
 	}
 
 	@Bean

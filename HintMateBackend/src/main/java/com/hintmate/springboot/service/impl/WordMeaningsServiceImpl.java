@@ -144,18 +144,12 @@ public class WordMeaningsServiceImpl implements WordMeaningsService {
 
         if (isInputValid(keyword) == true) {
             if (lookupWord(keyword).isEmpty()) {
-                System.out.println(" No exact matches for " + "\"" + keyword + "\"" + ".");
-//                if (!searchSimilarResults(keyword).isEmpty()) {
-//                    String r = searchSimilarResults(keyword);
-//                    return r;
-//                } else {
-//                    return "No match found !";
-//                }
+                System.out.println(" Meaning not found for " + "\"" + keyword + "\"" + ".");
             } else {
                 return lookupWord(keyword).toString();
             }
         }
-        return "No match found !";
+        return "Meaning not found !";
     }
 
     private ResultSet fetchAllData(Connection connection) {
