@@ -22,6 +22,7 @@ public class FilterWordsController {
         Utility.checkUserKnowledge();
         if(!Utility.userKnowledgeExists){
             Utility.createEmptyUserKnowledge();
+            request.setPayload(unknownWords);
         }
         WordsFilterService filterService = new WordFilterServiceImpl();
         unknownWords = filterService.getUnknownWords(request);
