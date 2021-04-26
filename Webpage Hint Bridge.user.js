@@ -204,7 +204,7 @@
 
             GM.xmlHttpRequest({
                 method: 'POST',
-                url: 'http://127.0.0.1:9000/getHintForWord',
+                url: 'http://127.0.0.1:8090/getHintForWord',
                 headers: {
                     'Content-Type':'application/json'
                 },
@@ -237,7 +237,7 @@
 
     /*
         $.ajax({
-            url: 'http://127.0.0.1:9000/getWordToHint',// this even works for cross-domain requests by default
+            url: 'http://127.0.0.1:8090/getWordToHint',// this even works for cross-domain requests by default
             xhr: function(){return new GM_XHR();},
             type: 'POST',
             contentType: 'application/json',
@@ -259,7 +259,7 @@
 */
  /*
     $.ajax({
-        url: 'http://127.0.0.1:9000/',// this even works for cross-domain requests by default
+        url: 'http://127.0.0.1:8090/',// this even works for cross-domain requests by default
         xhr: function(){return new GM_XHR();},
         type: 'POST',
         success: function(val){
